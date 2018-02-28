@@ -26,20 +26,23 @@ namespace LinkedPasswords.Dao
         {
             var isNew = !File.Exists(dbPath);
 
-            this.client = new SQLiteClient(dbPath, !isNew);
+            var args = new Dictionary<string, string>() { { "foreign keys", "true" } };
+            this.client = new SQLiteClient(dbPath, !isNew, args);
 
             var connection = client.GetConnection();
             if (isNew)
             {
-                connection.ChangePassword(dbPwd);
+                //connection.ChangePassword(dbPwd);
                 CreateTables();
             }
             else
             {
+                /*
                 connection.Close();
                 connection.SetPassword(dbPwd);
                 connection.Open();
                 //connection.ChangePassword(dbPwd);
+                */
             }
 
             client.ExecuteNonQuery("select * from " + TablePasswords + " limit 1");
@@ -52,20 +55,7 @@ namespace LinkedPasswords.Dao
         {
             StringBuilder sb = new StringBuilder();
             string sql;
-
-            //EntryTable
-            sb.AppendLine("CREATE TABLE " + TableEntries + " (");
-            sb.AppendLine("Id           integer PRIMARY KEY AUTOINCREMENT,");
-            sb.AppendLine("Name         text NOT NULL,");
-            sb.AppendLine("Url          text,");
-            sb.AppendLine("PasswordId   integer NOT NULL,");
-            sb.AppendLine("UNIQUE (Name),");
-            sb.AppendLine("FOREIGN KEY (PasswordId) REFERENCES " + TablePasswords  + "(Id) ON DELETE CASCADE ON UPDATE CASCADE");
-            sb.AppendLine(");");
-
-            sql = sb.ToString();
-            client.ExecuteNonQuery(sql);
-
+            
             //PasswordsTable
             sb.Clear();
             sb.AppendLine("CREATE TABLE " + TablePasswords + " (");
@@ -78,6 +68,21 @@ namespace LinkedPasswords.Dao
 
             sql = sb.ToString();
             client.ExecuteNonQuery(sql);
+
+            //EntryTable
+            sb.Clear();
+            sb.AppendLine("CREATE TABLE " + TableEntries + " (");
+            sb.AppendLine("Id           integer PRIMARY KEY AUTOINCREMENT,");
+            sb.AppendLine("Name         text NOT NULL,");
+            sb.AppendLine("Url          text,");
+            sb.AppendLine("PasswordId   integer NOT NULL,");
+            sb.AppendLine("UNIQUE (Name),");
+            sb.AppendLine("FOREIGN KEY (PasswordId) REFERENCES " + TablePasswords + "(Id) \nON DELETE CASCADE \nON UPDATE CASCADE");
+            sb.AppendLine(");");
+
+            sql = sb.ToString();
+            client.ExecuteNonQuery(sql);
+
         }
 
         public void Close()
@@ -86,14 +91,32 @@ namespace LinkedPasswords.Dao
         }
 
 
+        private const string cAddEntry = "insert into {0} values(null,'{1}','{2}',{3})";
+
         public void AddEntry(Entry i)
         {
-            throw new NotImplementedException();
+            string cmd = string.Format(cAddEntry, TableEntries,
+                SQLUtils.SQLEncode(i.Name),
+                SQLUtils.SQLEncode(i.URL),
+                i.PasswordId
+            );
+
+            client.ExecuteNonQuery(cmd);
+            i.ID = SQLUtils.GetLastInsertRow(client);
         }
+
+        private const string cAddPassword = "insert into {0} values(null,'{1}','{2}','{3}')";
 
         public void AddPassword(PasswordItem i)
         {
-            throw new NotImplementedException();
+            string cmd = string.Format(cAddPassword, TablePasswords,
+                 SQLUtils.SQLEncode(i.Name),
+                 SQLUtils.SQLEncode(i.Username),
+                 i.Password
+             );
+            
+            client.ExecuteNonQuery(cmd);
+            i.ID = SQLUtils.GetLastInsertRow(client);
         }
 
         public void DeleteEntry(Entry i)
@@ -103,7 +126,7 @@ namespace LinkedPasswords.Dao
 
         public void DeletePassword(PasswordItem i)
         {
-            throw new NotImplementedException();
+            client.ExecuteNonQuery("delete from " + TablePasswords + " where Id = " + i.ID);
         }
 
         public List<Entry> GetEntries()

@@ -26,6 +26,11 @@ namespace LinkedPasswords
 
             Dao.SQLiteDataStore client = new Dao.SQLiteDataStore("test.db", "test");
             client.Open();
+
+            var pwd = new Models.PasswordItem() { Name = "test", Username = "test", Password = "test" };
+            client.AddPassword(pwd);
+            client.AddEntry(new Models.Entry() { Name = "test", PasswordId = pwd.ID });
+            client.DeletePassword(pwd);
         }
     }
 }
