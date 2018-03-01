@@ -12,6 +12,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using LinkedPasswords.Dao;
+using LinkedPasswords.Models;
 
 namespace LinkedPasswords
 {
@@ -24,13 +26,32 @@ namespace LinkedPasswords
         {
             InitializeComponent();
 
-            Dao.SQLiteDataStore client = new Dao.SQLiteDataStore("test.db", "test");
+            Test();
+        }
+
+        private void Test()
+        {
+            IDataStore client = new SQLiteDataStore("test.db", "test", false);
             client.Open();
 
-            var pwd = new Models.PasswordItem() { Name = "test", Username = "test", Password = "test" };
+            var pwd = new PasswordItem() { Name = "test", Username = "test", Password = "test" };
+
+            (var passwords, var entries) = GetData(client);
+
             client.AddPassword(pwd);
-            client.AddEntry(new Models.Entry() { Name = "test", PasswordId = pwd.ID });
+            client.AddEntry(new Entry() { Name = "test", PasswordId = pwd.ID });
+            
+            (passwords, entries) = GetData(client);
+
             client.DeletePassword(pwd);
+
+            (passwords, entries) = GetData(client);
+
+        }
+
+        private (List<PasswordItem>, List<Entry>) GetData(IDataStore client)
+        {
+            return (client.GetPasswords(), client.GetEntries());
         }
     }
 }

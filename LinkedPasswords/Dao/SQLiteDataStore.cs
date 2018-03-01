@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using LinkedPasswords.Models;
 using Innouvous.Utils.Data;
 using System.IO;
+using System.Data;
 
 namespace LinkedPasswords.Dao
 {
@@ -13,15 +14,18 @@ namespace LinkedPasswords.Dao
     {
         private readonly string dbPath;
         private readonly string dbPwd;
+        private readonly bool usePassword;
 
         private SQLiteClient client;
 
-        public SQLiteDataStore(string dbPath, string dbPwd)
+
+        public SQLiteDataStore(string dbPath, string dbPwd, bool usePassword = true)
         {
             this.dbPath = dbPath;
             this.dbPwd = dbPwd;
+            this.usePassword = usePassword;
         }
-        
+
         public void Open()
         {
             var isNew = !File.Exists(dbPath);
@@ -32,17 +36,19 @@ namespace LinkedPasswords.Dao
             var connection = client.GetConnection();
             if (isNew)
             {
-                //connection.ChangePassword(dbPwd);
+                if (usePassword)
+                    connection.ChangePassword(dbPwd);
+
                 CreateTables();
             }
             else
             {
-                /*
-                connection.Close();
-                connection.SetPassword(dbPwd);
-                connection.Open();
-                //connection.ChangePassword(dbPwd);
-                */
+                if (usePassword)
+                {
+                    connection.Close();
+                    connection.SetPassword(dbPwd);
+                    connection.Open();
+                }
             }
 
             client.ExecuteNonQuery("select * from " + TablePasswords + " limit 1");
@@ -55,7 +61,7 @@ namespace LinkedPasswords.Dao
         {
             StringBuilder sb = new StringBuilder();
             string sql;
-            
+
             //PasswordsTable
             sb.Clear();
             sb.AppendLine("CREATE TABLE " + TablePasswords + " (");
@@ -112,16 +118,18 @@ namespace LinkedPasswords.Dao
             string cmd = string.Format(cAddPassword, TablePasswords,
                  SQLUtils.SQLEncode(i.Name),
                  SQLUtils.SQLEncode(i.Username),
-                 i.Password
+                 SQLUtils.SQLEncode(i.Password)
              );
-            
+
             client.ExecuteNonQuery(cmd);
             i.ID = SQLUtils.GetLastInsertRow(client);
         }
 
+
+
         public void DeleteEntry(Entry i)
         {
-            throw new NotImplementedException();
+            client.ExecuteNonQuery("delete from " + TableEntries + " where Id = " + i.ID);
         }
 
         public void DeletePassword(PasswordItem i)
@@ -131,23 +139,77 @@ namespace LinkedPasswords.Dao
 
         public List<Entry> GetEntries()
         {
-            throw new NotImplementedException();
+            var results = client.ExecuteSelect("select * from " + TableEntries);
+
+            List<Entry> entries = new List<Entry>();
+
+            foreach (DataRow r in results.Rows)
+            {
+                var entry = new Entry();
+                entry.ID = GetValue<int>(r["Id"]);
+                entry.Name = GetValue<string>(r["Name"]);
+                entry.URL = GetValue<string>(r["Url"]);
+                entry.PasswordId = GetValue<int>(r["PasswordId"]);
+
+                entries.Add(entry);
+            }
+
+            return entries;
         }
 
         public List<PasswordItem> GetPasswords()
         {
-            throw new NotImplementedException();
+            var results = client.ExecuteSelect("select * from " + TablePasswords);
+
+            List<PasswordItem> passwords = new List<PasswordItem>();
+
+            foreach (DataRow r in results.Rows)
+            {
+                var pwd = new PasswordItem();
+                pwd.ID = GetValue<int>(r["Id"]);
+                pwd.Name = GetValue<string>(r["Name"]);
+                pwd.Username = GetValue<string>(r["Username"]);
+                pwd.Password = GetValue<string>(r["Password"]);
+
+                passwords.Add(pwd);
+            }
+
+            return passwords;
         }
 
-        
+        private const string cUpdateEntry = "update {0} set Name = '{2}', Url='{3}', PasswordId={4} where Id = {1}";
+        private const string cUpdatePassword = "update {0} set Name = {2}, Username = '{3}', Password = '{4}', where Id = {1}";
+
         public void UpdateEntry(Entry i)
         {
-            throw new NotImplementedException();
+            string cmd = string.Format(cUpdateEntry, TableEntries, i.ID,
+                SQLUtils.SQLEncode(i.Name),
+                SQLUtils.SQLEncode(i.URL),
+                i.PasswordId
+            );
+
+            client.ExecuteNonQuery(cmd);
         }
 
         public void UpdatePassword(PasswordItem i)
         {
-            throw new NotImplementedException();
+            string cmd = string.Format(cUpdatePassword, TablePasswords, i.ID,
+                    SQLUtils.SQLEncode(i.Name),
+                     SQLUtils.SQLEncode(i.Username),
+                     SQLUtils.SQLEncode(i.Password)
+                 );
+
+            client.ExecuteNonQuery(cmd);
+        }
+
+        private T GetValue<T>(object v)
+        {
+            if (SQLUtils.IsNull(v))
+                return default(T);
+
+            Type t = typeof(T);
+
+            return (T)Convert.ChangeType(v, t);
         }
     }
 }
