@@ -1,0 +1,34 @@
+﻿<Window x:Class="LinkedPasswords.OpenDatabaseWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:LinkedPasswords"
+        mc:Ignorable="d"
+        Title="Select Database" WindowStartupLocation="CenterOwner" SizeToContent="Height" Width="300">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+
+        <Label Grid.Row="0" Grid.Column="0" Content="Database: "/>
+        <ComboBox Grid.Row="0" Grid.Column="1" IsEditable="True" ItemsSource="{Binding PathHistory}" Text="{Binding Path}"/>
+        <Button Grid.Row="0" Grid.Column="2" Command="{Binding SelectDatabaseCommand}">...</Button>
+
+        <Label Grid.Row="1" Grid.Column="0" Content="Password: "/>
+        <PasswordBox Grid.Row="1" Grid.Column="1" Name="PasswordInput" />
+
+        <StackPanel HorizontalAlignment="Center" Orientation="Horizontal" Grid.Row="2" Grid.ColumnSpan="3">
+            <Button Command="{Binding OpenCommand}">Open</Button>
+            <Button Command="{Binding CancelCommand}" Visibility="{Binding CancelVisibility, FallbackValue=Collapsed}">Cancel</Button>
+        </StackPanel>
+    </Grid>
+</Window>

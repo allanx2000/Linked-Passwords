@@ -7,6 +7,30 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="350" Width="525">
     <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <Menu Grid.Row="0">
+            <MenuItem Header="Settings"/>
+        </Menu>
+
+        <GroupBox Header="Passwords" Grid.Row="1">
+            <ListBox ItemsSource="{Binding Passwords}" DisplayMemberPath="Name"/>
+        </GroupBox>
+
+        <GroupBox Header="Logins" Grid.Row="2">
+            <ListBox ItemsSource="{Binding Logins}">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <Label ToolTip="{Binding Description}">
+                            <TextBlock Text="{Binding Name}"/>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </GroupBox>
         
     </Grid>
 </Window>

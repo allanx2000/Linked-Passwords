@@ -14,6 +14,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using LinkedPasswords.Dao;
 using LinkedPasswords.Models;
+using LinkedPasswords.ViewModels;
 
 namespace LinkedPasswords
 {
@@ -22,11 +23,15 @@ namespace LinkedPasswords
     /// </summary>
     public partial class MainWindow : Window
     {
+        private readonly MainWindowViewModel vm;
+
         public MainWindow()
         {
             InitializeComponent();
 
-            Test();
+            vm = new MainWindowViewModel(this);
+            DataContext = vm;
+            //Test();
         }
 
         private void Test()

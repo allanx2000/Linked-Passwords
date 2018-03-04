@@ -4,6 +4,6 @@
              xmlns:local="clr-namespace:LinkedPasswords"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
-         
+        <ResourceDictionary Source="pack://application:,,,/Innouvous.Utils.Merged;component/GenericDictionary45.xaml"/>
     </Application.Resources>
 </Application>
