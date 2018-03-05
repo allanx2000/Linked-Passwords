@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace LinkedPasswords.Models
 {
-    class Entry
+    public class Entry
     {
         public int ID { get; set; }
         public string Name { get; set; }

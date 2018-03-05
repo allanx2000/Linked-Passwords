@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace LinkedPasswords.Dao
 {
-    interface IDataStore
+    public interface IDataStore
     {
         void Open();
         void Close();

@@ -24,11 +24,11 @@
         <Button Grid.Row="0" Grid.Column="2" Command="{Binding SelectDatabaseCommand}">...</Button>
 
         <Label Grid.Row="1" Grid.Column="0" Content="Password: "/>
-        <PasswordBox Grid.Row="1" Grid.Column="1" Name="PasswordInput" />
+        <PasswordBox Margin="5" Padding="4" Grid.Row="1" Grid.Column="1" Name="PasswordInput" />
 
         <StackPanel HorizontalAlignment="Center" Orientation="Horizontal" Grid.Row="2" Grid.ColumnSpan="3">
             <Button Command="{Binding OpenCommand}">Open</Button>
-            <Button Command="{Binding CancelCommand}" Visibility="{Binding CancelVisibility, FallbackValue=Collapsed}">Cancel</Button>
+            <Button Command="{Binding CancelCommand}">Cancel</Button>
         </StackPanel>
     </Grid>
 </Window>

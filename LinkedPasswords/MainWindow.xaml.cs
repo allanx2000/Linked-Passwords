@@ -31,6 +31,7 @@ namespace LinkedPasswords
 
             vm = new MainWindowViewModel(this);
             DataContext = vm;
+
             //Test();
         }
 
@@ -57,6 +58,11 @@ namespace LinkedPasswords
         private (List<PasswordItem>, List<Entry>) GetData(IDataStore client)
         {
             return (client.GetPasswords(), client.GetEntries());
+        }
+
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            vm.OpenDatabase();
         }
     }
 }

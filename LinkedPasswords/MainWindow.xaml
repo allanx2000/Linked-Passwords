@@ -5,12 +5,13 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:LinkedPasswords"
         mc:Ignorable="d"
-        Title="MainWindow" Height="350" Width="525">
+        Title="MainWindow" Height="350" Width="525" Loaded="Window_Loaded">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
         <Menu Grid.Row="0">
@@ -27,10 +28,14 @@
                     <DataTemplate>
                         <Label ToolTip="{Binding Description}">
                             <TextBlock Text="{Binding Name}"/>
+                        </Label>
                     </DataTemplate>
                 </ListBox.ItemTemplate>
             </ListBox>
         </GroupBox>
-        
+
+        <StatusBar Grid.Row="3">
+            <TextBlock Text="{Binding StatusMessage}" />
+        </StatusBar>
     </Grid>
 </Window>

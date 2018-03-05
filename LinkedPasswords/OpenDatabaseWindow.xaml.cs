@@ -11,6 +11,8 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using LinkedPasswords.Dao;
+using LinkedPasswords.ViewModels;
 
 namespace LinkedPasswords
 {
@@ -19,9 +21,20 @@ namespace LinkedPasswords
     /// </summary>
     public partial class OpenDatabaseWindow : Window
     {
+        private readonly OpenDatabaseWindowViewModel vm;
+
         public OpenDatabaseWindow()
         {
             InitializeComponent();
+            this.vm = new OpenDatabaseWindowViewModel(this, PasswordInput);
+            DataContext = vm;
+        }
+
+        public bool Cancelled { get { return vm.Cancelled; } }
+
+        public IDataStore GetDataStore()
+        {
+            return vm.DataStore;
         }
     }
 }
