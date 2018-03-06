@@ -8,7 +8,7 @@
         local:WindowBehavior.HideCloseButton="True"
         Title="Select Database" 
         WindowStartupLocation="CenterOwner" 
-        SizeToContent="Height" Width="300"
+        SizeToContent="Height" Width="500"
         WindowStyle="ToolWindow">
 
     <Window.InputBindings>

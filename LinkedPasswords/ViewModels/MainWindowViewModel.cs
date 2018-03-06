@@ -1,4 +1,5 @@
 ﻿using Innouvous.Utils;
+using Innouvous.Utils.MVVM;
 using LinkedPasswords.Dao;
 using LinkedPasswords.Models;
 using System;
@@ -9,6 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Data;
+using System.Windows.Input;
 
 namespace LinkedPasswords.ViewModels
 {
@@ -50,12 +52,10 @@ namespace LinkedPasswords.ViewModels
             get { return cvsEntries.View; }
         }
         
-
         public void OpenDatabase()
         {
             try
             {
-                
                 var dlg = new OpenDatabaseWindow();
                 dlg.Owner = mainWindow;
                 dlg.ShowDialog();
@@ -73,7 +73,11 @@ namespace LinkedPasswords.ViewModels
                     LoadLists();
 
                     TryAdd();
+
+
+                    StatusMessage = "Opened: " + dlg.Path;
                 }
+
             }
             catch (Exception e)
             {
@@ -81,6 +85,10 @@ namespace LinkedPasswords.ViewModels
             }
         }
 
+        public ICommand OpenDatabaseCommand
+        {
+            get { return new CommandHelper(OpenDatabase); }
+        }
 
         private void TryAdd()
         {
@@ -90,13 +98,8 @@ namespace LinkedPasswords.ViewModels
                 ds.AddPassword(pwd);
                 ds.AddEntry(new Entry() { Name = "test", PasswordId = pwd.ID });
 
-                StatusMessage = "Test Data Added";
-                
                 LoadLists();
             }
-            else
-                StatusMessage = "Test Data Exists";
-            
         }
         
         private void LoadLists()

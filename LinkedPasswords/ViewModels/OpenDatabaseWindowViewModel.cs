@@ -4,22 +4,49 @@ using System.Windows.Controls;
 using Innouvous.Utils.MVVM;
 using System.Windows.Input;
 using Innouvous.Utils;
+using System.Collections;
+using System.Linq;
 
 namespace LinkedPasswords.ViewModels
 {
-    public class OpenDatabaseWindowViewModel : Innouvous.Utils.Merged45.MVVM45.ViewModel
+    internal class OpenDatabaseWindowViewModel : Innouvous.Utils.Merged45.MVVM45.ViewModel
     {
         private readonly OpenDatabaseWindow openDatabaseWindow;
         private readonly PasswordBox pwdBox;
+
+        private readonly Properties.Settings settings = Properties.Settings.Default;
+        private SerializableList<string> pathHistory = new SerializableList<string>(new PathSerializer());
+
+        private class PathSerializer : Serializer<string>
+        {
+            public string Deserialize(string obj)
+            {
+                return obj;
+            }
+
+            public string Serialize(string obj)
+            {
+                return obj.ToString();
+            }
+        }
 
         public OpenDatabaseWindowViewModel(OpenDatabaseWindow openDatabaseWindow, PasswordBox pwdBox)
         {
             this.openDatabaseWindow = openDatabaseWindow;
             this.pwdBox = pwdBox;
             Cancelled = true;
+
+            pathHistory.LoadFromString(settings.History);
+
+            Path = pathHistory.Items.FirstOrDefault();
         }
 
         public bool Cancelled { get; private set; }
+
+        public IEnumerable PathHistory
+        {
+            get { return pathHistory.Items; }
+        }
 
         public string Path
         {
@@ -78,6 +105,8 @@ namespace LinkedPasswords.ViewModels
             }
         }
 
+        public SerializableList<string> PathHistory1 { get => pathHistory; set => pathHistory = value; }
+
         private void OpenDataStore()
         {
             try
@@ -91,6 +120,10 @@ namespace LinkedPasswords.ViewModels
                 ds.Open();
 
                 DataStore = ds;
+
+                pathHistory.AddItem(Path);
+                settings.History = pathHistory.SerializeToString();
+                settings.Save();
 
                 Cancelled = false;
                 openDatabaseWindow.Close();

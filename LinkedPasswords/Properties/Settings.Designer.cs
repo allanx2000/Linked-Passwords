@@ -26,12 +26,12 @@ namespace LinkedPasswords.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string DBPath {
+        public string History {
             get {
-                return ((string)(this["DBPath"]));
+                return ((string)(this["History"]));
             }
             set {
-                this["DBPath"] = value;
+                this["History"] = value;
             }
         }
     }

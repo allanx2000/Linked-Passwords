@@ -5,6 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:LinkedPasswords"
         mc:Ignorable="d"
+        WindowStartupLocation="CenterScreen" 
+        
         Title="Linked Passwords" Height="500" Width="450" Loaded="Window_Loaded">
 
     <Grid>
@@ -16,7 +18,7 @@
         </Grid.RowDefinitions>
 
         <Menu Grid.Row="0">
-            <MenuItem Header="Settings"/>
+            <MenuItem Header="Open" Command="{Binding OpenDatabaseCommand}"/>
         </Menu>
 
         <GroupBox Header="Passwords" Grid.Row="1">

@@ -32,6 +32,8 @@ namespace LinkedPasswords
 
         public bool Cancelled { get { return vm.Cancelled; } }
 
+        public string Path { get { return vm.Path; } }
+
         public IDataStore GetDataStore()
         {
             return vm.DataStore;
