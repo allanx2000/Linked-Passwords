@@ -90,6 +90,8 @@ namespace LinkedPasswords.ViewModels
                 IDataStore ds = new SQLiteDataStore(Path, pwdBox.Password);
                 ds.Open();
 
+                DataStore = ds;
+
                 Cancelled = false;
                 openDatabaseWindow.Close();
             }

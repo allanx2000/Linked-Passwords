@@ -5,7 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:LinkedPasswords"
         mc:Ignorable="d"
-        Title="MainWindow" Height="350" Width="525" Loaded="Window_Loaded">
+        Title="Linked Passwords" Height="500" Width="450" Loaded="Window_Loaded">
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -19,19 +20,60 @@
         </Menu>
 
         <GroupBox Header="Passwords" Grid.Row="1">
-            <ListBox ItemsSource="{Binding Passwords}" DisplayMemberPath="Name"/>
+
+
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <ListBox Grid.Column="0" ItemsSource="{Binding Passwords}">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <Label>
+                                <TextBlock Text="{Binding Name}"/>
+                            </Label>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+
+                <StackPanel Grid.Column="1" Orientation="Vertical" VerticalAlignment="Center">
+                    <Button>Add</Button>
+                    <Button>Edit</Button>
+                    <Button>Delete</Button>
+                </StackPanel>
+            </Grid>
+
         </GroupBox>
 
-        <GroupBox Header="Logins" Grid.Row="2">
-            <ListBox ItemsSource="{Binding Logins}">
-                <ListBox.ItemTemplate>
-                    <DataTemplate>
-                        <Label ToolTip="{Binding Description}">
-                            <TextBlock Text="{Binding Name}"/>
-                        </Label>
-                    </DataTemplate>
-                </ListBox.ItemTemplate>
-            </ListBox>
+        <GroupBox Grid.Row="2">
+
+            <GroupBox.Header>
+                <TextBlock Height="20">Logins</TextBlock>
+            </GroupBox.Header>
+
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <ListBox Grid.Column="0" ItemsSource="{Binding Logins}">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <Label ToolTip="{Binding Description}">
+                                <TextBlock Text="{Binding Name}"/>
+                            </Label>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+
+                <StackPanel Grid.Column="1" Orientation="Vertical" VerticalAlignment="Center">
+                    <Button>Add</Button>
+                    <Button>Edit</Button>
+                    <Button>Delete</Button>
+                </StackPanel>
+            </Grid>
         </GroupBox>
 
         <StatusBar Grid.Row="3">

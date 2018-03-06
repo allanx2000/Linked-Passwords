@@ -5,7 +5,16 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:LinkedPasswords"
         mc:Ignorable="d"
-        Title="Select Database" WindowStartupLocation="CenterOwner" SizeToContent="Height" Width="300">
+        local:WindowBehavior.HideCloseButton="True"
+        Title="Select Database" 
+        WindowStartupLocation="CenterOwner" 
+        SizeToContent="Height" Width="300"
+        WindowStyle="ToolWindow">
+
+    <Window.InputBindings>
+        <KeyBinding Key="Esc" Command="{Binding CancelCommand}"/>
+        <KeyBinding Key="Return" Command="{Binding OpenCommand}"/>
+    </Window.InputBindings>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>

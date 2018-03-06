@@ -4,6 +4,7 @@ using LinkedPasswords.Models;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -25,7 +26,7 @@ namespace LinkedPasswords.ViewModels
         private readonly Dictionary<int, PasswordItem> passwordsMap = new Dictionary<int, PasswordItem>();
 
         private readonly ObservableCollection<Entry> entries = new ObservableCollection<Entry>();
-
+        
         public MainWindowViewModel(MainWindow mainWindow)
         {
             this.mainWindow = mainWindow;
@@ -38,6 +39,17 @@ namespace LinkedPasswords.ViewModels
             cvsEntries.Source = entries;
             cvsEntries.SortDescriptions.Add(new System.ComponentModel.SortDescription("Name", System.ComponentModel.ListSortDirection.Ascending));
         }
+
+        public ICollectionView Passwords
+        {
+            get { return cvsPasswords.View; }
+        }
+
+        public ICollectionView Logins
+        {
+            get { return cvsEntries.View; }
+        }
+        
 
         public void OpenDatabase()
         {
@@ -54,9 +66,13 @@ namespace LinkedPasswords.ViewModels
                 var newDs = dlg.GetDataStore();
                 if (newDs != null)
                 {
-                    ds.Close();
+                    if (ds != null)
+                      ds.Close();
+
                     ds = newDs;
                     LoadLists();
+
+                    TryAdd();
                 }
             }
             catch (Exception e)
@@ -65,6 +81,24 @@ namespace LinkedPasswords.ViewModels
             }
         }
 
+
+        private void TryAdd()
+        {
+            if (passwords.Count == 0)
+            {
+                var pwd = new PasswordItem() { Name = "test", Username = "test", Password = "test" };
+                ds.AddPassword(pwd);
+                ds.AddEntry(new Entry() { Name = "test", PasswordId = pwd.ID });
+
+                StatusMessage = "Test Data Added";
+                
+                LoadLists();
+            }
+            else
+                StatusMessage = "Test Data Exists";
+            
+        }
+        
         private void LoadLists()
         {
             passwords.Clear();
