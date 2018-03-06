@@ -22,12 +22,12 @@ namespace LinkedPasswords.ViewModels
         private IDataStore ds;
 
         private CollectionViewSource cvsPasswords;
-        private CollectionViewSource cvsEntries;
+        private CollectionViewSource cvsLogins;
 
         private readonly ObservableCollection<PasswordItem> passwords = new ObservableCollection<PasswordItem>();
         private readonly Dictionary<int, PasswordItem> passwordsMap = new Dictionary<int, PasswordItem>();
 
-        private readonly ObservableCollection<Entry> entries = new ObservableCollection<Entry>();
+        private readonly ObservableCollection<Entry> logins = new ObservableCollection<Entry>();
         
         public MainWindowViewModel(MainWindow mainWindow)
         {
@@ -37,10 +37,39 @@ namespace LinkedPasswords.ViewModels
             cvsPasswords.Source = passwords;
             cvsPasswords.SortDescriptions.Add(new System.ComponentModel.SortDescription("Name", System.ComponentModel.ListSortDirection.Ascending));
             
-            cvsEntries = new CollectionViewSource();
-            cvsEntries.Source = entries;
-            cvsEntries.SortDescriptions.Add(new System.ComponentModel.SortDescription("Name", System.ComponentModel.ListSortDirection.Ascending));
+            cvsLogins = new CollectionViewSource();
+            cvsLogins.Source = logins;
+            cvsLogins.SortDescriptions.Add(new System.ComponentModel.SortDescription("Name", System.ComponentModel.ListSortDirection.Ascending));
         }
+
+        public bool DatabaseLoaded
+        {
+            get { return ds != null; }
+            private set {
+                RaisePropertyChanged();
+            }
+        }
+
+        public Entry SelectedLogin
+        {
+            get { return Get<Entry>(); }
+            set
+            {
+                Set(value);
+                RaisePropertyChanged();
+            }
+        }
+
+        public PasswordItem SelectedPassword
+        {
+            get { return Get<PasswordItem>(); }
+            set
+            {
+                Set(value);
+                RaisePropertyChanged();
+            }
+        }
+        
 
         public ICollectionView Passwords
         {
@@ -49,9 +78,30 @@ namespace LinkedPasswords.ViewModels
 
         public ICollectionView Logins
         {
-            get { return cvsEntries.View; }
+            get { return cvsLogins.View; }
         }
-        
+
+        public bool HasPasswords
+        {
+            get { return Get<bool>(); }
+            set
+            {
+                Set(value);
+                RaisePropertyChanged();
+            }
+        }
+
+        public string StatusMessage
+        {
+            get { return Get<string>(); }
+            private set
+            {
+                Set(value);
+                RaisePropertyChanged();
+            }
+        }
+
+
         public void OpenDatabase()
         {
             try
@@ -77,6 +127,8 @@ namespace LinkedPasswords.ViewModels
 
                     StatusMessage = "Opened: " + dlg.Path;
                 }
+
+                DatabaseLoaded = true;
 
             }
             catch (Exception e)
@@ -105,7 +157,7 @@ namespace LinkedPasswords.ViewModels
         private void LoadLists()
         {
             passwords.Clear();
-            entries.Clear();
+            logins.Clear();
 
             passwordsMap.Clear();
 
@@ -117,31 +169,52 @@ namespace LinkedPasswords.ViewModels
 
             foreach (var entry in ds.GetEntries())
             {
-                entries.Add(entry);
+                logins.Add(entry);
             }
+
+            HasPasswords = passwords.Count > 0;
         }
 
-        public string StatusMessage
-        {
-            get { return Get<string>(); }
-            private set
-            {
-                Set(value);
-                RaisePropertyChanged();
-            }
-        }
-        
         public void Close()
         {
             try
             {
                 if (ds != null)
                     ds.Close();
+                
+                DatabaseLoaded = false;
             }
             catch (Exception e)
             {
                 MessageBoxFactory.ShowError(e);
             }
         }
+
+        #region Password Commands
+        public ICommand DeletePasswordCommand
+        {
+            get { return new CommandHelper(DeletePassword); }
+        }
+
+        private void DeletePassword()
+        {
+            try
+            {
+                if (SelectedPassword == null)
+                    return;
+
+                ds.DeletePassword(SelectedPassword);
+                LoadLists();
+            }
+            catch (Exception e)
+            {
+                MessageBoxFactory.ShowError(e);
+            }
+        }
+
+        #endregion
+
+        #region Login Commands
+        #endregion
     }
 }
