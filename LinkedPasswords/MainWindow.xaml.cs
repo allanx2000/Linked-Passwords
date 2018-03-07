@@ -45,7 +45,7 @@ namespace LinkedPasswords
             (var passwords, var entries) = GetData(client);
 
             client.AddPassword(pwd);
-            client.AddEntry(new Entry() { Name = "test", PasswordId = pwd.ID });
+            client.AddEntry(new Entry() { Name = "test", CredentialId = pwd.ID });
             
             (passwords, entries) = GetData(client);
 

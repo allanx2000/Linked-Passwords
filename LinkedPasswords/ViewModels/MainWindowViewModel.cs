@@ -9,6 +9,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Data;
 using System.Windows.Input;
 
@@ -148,7 +149,7 @@ namespace LinkedPasswords.ViewModels
             {
                 var pwd = new PasswordItem() { Name = "test", Username = "test", Password = "test" };
                 ds.AddPassword(pwd);
-                ds.AddEntry(new Entry() { Name = "test", PasswordId = pwd.ID });
+                ds.AddEntry(new Entry() { Name = "test", CredentialId = pwd.ID });
 
                 LoadLists();
             }
@@ -176,8 +177,8 @@ namespace LinkedPasswords.ViewModels
                 if (!string.IsNullOrEmpty(entry.URL))
                     sb.AppendLine("URL: " + entry.URL);
 
-                if (entry.PasswordId != null)
-                    sb.AppendLine("Using: " + passwordsMap[entry.PasswordId.Value].Name);
+                if (entry.CredentialId != null)
+                    sb.AppendLine("Using: " + passwordsMap[entry.CredentialId.Value].Name);
                 
                 entry.Description = sb.ToString();
 
@@ -365,6 +366,74 @@ namespace LinkedPasswords.ViewModels
                 MessageBoxFactory.ShowError(e);
             }
         }
+        #endregion
+
+        #region Copy Commands
+
+        public ICommand CopyUsernameCommand
+        {
+            get { return new CommandHelper(CopyUsername); }
+        }
+
+        private void CopyUsername()
+        {
+            if (SelectedLogin != null)
+            {
+                if (SelectedLogin.CredentialId == null)
+                    StatusMessage = "No Credential associated with " + SelectedLogin.Name;
+                else
+                {
+                    var pwd = passwordsMap[SelectedLogin.CredentialId.Value];
+                    Copy(pwd.Username);
+                    StatusMessage = "Username copied for " + SelectedLogin.Name;
+                }
+            }
+        }
+
+        public ICommand CopyPasswordCommand
+        {
+            get { return new CommandHelper(CopyPassword); }
+        }
+
+        private void CopyPassword()
+        {
+            if (SelectedLogin != null)
+            {
+                if (SelectedLogin.CredentialId == null)
+                    StatusMessage = "No Credential associated with " + SelectedLogin.Name;
+                else
+                {
+                    var pwd = passwordsMap[SelectedLogin.CredentialId.Value];
+                    Copy(pwd.Password);
+                    StatusMessage = "Password copied for " + SelectedLogin.Name;
+                }
+            }
+        }
+
+        public ICommand CopyUrlCommand
+        {
+            get { return new CommandHelper(CopyUrl); }
+        }
+
+        private void CopyUrl()
+        {
+            if (SelectedLogin != null)
+            {
+                if (string.IsNullOrEmpty(SelectedLogin.URL))
+                    StatusMessage = "No URL associated with " + SelectedLogin.Name;
+                else
+                {
+                    Copy(SelectedLogin.URL);
+                    StatusMessage = "URL copied for " + SelectedLogin.Name;
+                }
+            }
+        }
+
+        private void Copy(string data)
+        {
+            Clipboard.SetDataObject(data);
+        }
+
         #endregion
     }
 }

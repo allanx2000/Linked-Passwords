@@ -39,8 +39,8 @@ namespace LinkedPasswords.ViewModels
                 Name = existing.Name;
                 URL = existing.URL;
 
-                if (existing.PasswordId != null)
-                    SelectedPassword = passwordsMap[existing.PasswordId.Value];
+                if (existing.CredentialId != null)
+                    SelectedPassword = passwordsMap[existing.CredentialId.Value];
             }
         }
 
@@ -122,9 +122,9 @@ namespace LinkedPasswords.ViewModels
                 entry.Name = Name;
 
                 if (SelectedPassword == null)
-                    entry.PasswordId = null;
+                    entry.CredentialId = null;
                 else
-                    entry.PasswordId = SelectedPassword.ID;
+                    entry.CredentialId = SelectedPassword.ID;
 
 
                 if (isEdit)

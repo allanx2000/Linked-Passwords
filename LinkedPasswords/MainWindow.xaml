@@ -12,6 +12,12 @@
     <Window.Resources>
         <local:ObjectToBoolConverter x:Key="EnabledConverter"/>
     </Window.Resources>
+
+    <Window.InputBindings>
+        <KeyBinding Modifiers="Ctrl" Key="Z" Command="{Binding CopyUrlCommand}"/>
+        <KeyBinding Modifiers="Ctrl" Key="X" Command="{Binding CopyUsernameCommand}"/>
+        <KeyBinding Modifiers="Ctrl" Key="C" Command="{Binding CopyPasswordCommand}"/>
+    </Window.InputBindings>
     
     <Grid>
         <Grid.RowDefinitions>
@@ -25,7 +31,7 @@
             <MenuItem Header="Open" Command="{Binding OpenDatabaseCommand}"/>
         </Menu>
 
-        <GroupBox Header="Passwords" Grid.Row="1" IsEnabled="{Binding DatabaseLoaded}">
+        <GroupBox Header="Credentials" Grid.Row="1" IsEnabled="{Binding DatabaseLoaded}">
 
 
             <Grid>
@@ -53,7 +59,7 @@
 
         </GroupBox>
 
-        <GroupBox Grid.Row="2" >
+        <GroupBox Grid.Row="2" IsEnabled="{Binding HasPasswords}">
 
             <GroupBox.Header>
                 <TextBlock Height="20">Logins</TextBlock>

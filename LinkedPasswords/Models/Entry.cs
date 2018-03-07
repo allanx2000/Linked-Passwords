@@ -14,7 +14,7 @@ namespace LinkedPasswords.Models
         public int ID { get; set; }
         public string Name { get; set; }
         public string URL { get; set; }
-        public int? PasswordId { get; set; }
+        public int? CredentialId { get; set; }
 
 
         /** ViewModel **/
@@ -37,7 +37,7 @@ namespace LinkedPasswords.Models
 
         public SolidColorBrush TextColor
         {
-            get { return PasswordId == null ? BrushColors.Red : BrushColors.Black; }
+            get { return CredentialId == null ? BrushColors.Red : BrushColors.Black; }
         }
 
 

@@ -104,7 +104,7 @@ namespace LinkedPasswords.Dao
             string cmd = string.Format(cAddEntry, TableEntries,
                 SQLUtils.SQLEncode(i.Name),
                 SQLUtils.SQLEncode(i.URL),
-                i.PasswordId
+                i.CredentialId
             );
 
             client.ExecuteNonQuery(cmd);
@@ -152,7 +152,7 @@ namespace LinkedPasswords.Dao
 
                 var pwd = r["PasswordId"];
                 if (!SQLUtils.IsNull(pwd))
-                    entry.PasswordId = Convert.ToInt32(pwd);
+                    entry.CredentialId = Convert.ToInt32(pwd);
 
                 entries.Add(entry);
             }
@@ -188,7 +188,7 @@ namespace LinkedPasswords.Dao
             string cmd = string.Format(cUpdateEntry, TableEntries, i.ID,
                 SQLUtils.SQLEncode(i.Name),
                 SQLUtils.SQLEncode(i.URL),
-                i.PasswordId
+                i.CredentialId
             );
 
             client.ExecuteNonQuery(cmd);
