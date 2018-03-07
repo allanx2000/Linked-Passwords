@@ -16,6 +16,7 @@ namespace LinkedPasswords.ViewModels
 
         private readonly Properties.Settings settings = Properties.Settings.Default;
         private SerializableList<string> pathHistory = new SerializableList<string>(new PathSerializer());
+        private const string Extension = ".db";
 
         private class PathSerializer : Serializer<string>
         {
@@ -105,8 +106,19 @@ namespace LinkedPasswords.ViewModels
             }
         }
 
-        public SerializableList<string> PathHistory1 { get => pathHistory; set => pathHistory = value; }
+        public ICommand ClearHistoryCommand
 
+        {
+            get
+            {
+                return new CommandHelper(() =>
+                {
+                    pathHistory.Clear();
+                    RaisePropertyChanged("PathHistory");
+                });
+            }
+        }
+            
         private void OpenDataStore()
         {
             try
@@ -115,6 +127,8 @@ namespace LinkedPasswords.ViewModels
                 {
                     throw new Exception("A path and password are required.");
                 }
+                else if (!Path.EndsWith(Extension))
+                    Path += Extension;
 
                 IDataStore ds = new SQLiteDataStore(Path, pwdBox.Password);
                 ds.Open();

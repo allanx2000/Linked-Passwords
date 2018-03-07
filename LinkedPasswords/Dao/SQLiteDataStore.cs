@@ -81,9 +81,9 @@ namespace LinkedPasswords.Dao
             sb.AppendLine("Id           integer PRIMARY KEY AUTOINCREMENT,");
             sb.AppendLine("Name         text NOT NULL,");
             sb.AppendLine("Url          text,");
-            sb.AppendLine("PasswordId   integer NOT NULL,");
+            sb.AppendLine("PasswordId   integer,");
             sb.AppendLine("UNIQUE (Name),");
-            sb.AppendLine("FOREIGN KEY (PasswordId) REFERENCES " + TablePasswords + "(Id) \nON DELETE CASCADE \nON UPDATE CASCADE");
+            sb.AppendLine("FOREIGN KEY (PasswordId) REFERENCES " + TablePasswords + "(Id) \nON DELETE SET NULL \nON UPDATE CASCADE");
             sb.AppendLine(");");
 
             sql = sb.ToString();
@@ -149,7 +149,10 @@ namespace LinkedPasswords.Dao
                 entry.ID = GetValue<int>(r["Id"]);
                 entry.Name = GetValue<string>(r["Name"]);
                 entry.URL = GetValue<string>(r["Url"]);
-                entry.PasswordId = GetValue<int>(r["PasswordId"]);
+
+                var pwd = r["PasswordId"];
+                if (!SQLUtils.IsNull(pwd))
+                    entry.PasswordId = Convert.ToInt32(pwd);
 
                 entries.Add(entry);
             }

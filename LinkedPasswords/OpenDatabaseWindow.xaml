@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:LinkedPasswords"
         mc:Ignorable="d"
         local:WindowBehavior.HideCloseButton="True"
-        Title="Select Database" 
+        Title="Open Database" 
         WindowStartupLocation="CenterOwner" 
         SizeToContent="Height" Width="500"
         WindowStyle="ToolWindow">
@@ -35,9 +35,19 @@
         <Label Grid.Row="1" Grid.Column="0" Content="Password: "/>
         <PasswordBox Margin="5" Padding="4" Grid.Row="1" Grid.Column="1" Name="PasswordInput" />
 
-        <StackPanel HorizontalAlignment="Center" Orientation="Horizontal" Grid.Row="2" Grid.ColumnSpan="3">
-            <Button Command="{Binding OpenCommand}">Open</Button>
-            <Button Command="{Binding CancelCommand}">Cancel</Button>
-        </StackPanel>
+        <Grid Grid.Row="2" Grid.ColumnSpan="3">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <StackPanel HorizontalAlignment="Center" Orientation="Horizontal" Grid.Column="1" >
+                <Button Command="{Binding OpenCommand}">Open</Button>
+                <Button Command="{Binding CancelCommand}">Cancel</Button>
+            </StackPanel>
+
+            <Button Grid.Column="2" HorizontalAlignment="Right" Command="{Binding ClearHistoryCommand}">Clear History</Button>
+        </Grid>
     </Grid>
 </Window>

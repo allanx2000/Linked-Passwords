@@ -144,7 +144,7 @@ namespace LinkedPasswords.ViewModels
 
         private void TryAdd()
         {
-            if (passwords.Count == 0)
+            if (logins.Count == 0 && passwords.Count == 0)
             {
                 var pwd = new PasswordItem() { Name = "test", Username = "test", Password = "test" };
                 ds.AddPassword(pwd);
@@ -167,8 +167,20 @@ namespace LinkedPasswords.ViewModels
                 passwordsMap[pwd.ID] = pwd;
             }
 
+            StringBuilder sb = new StringBuilder();
+
             foreach (var entry in ds.GetEntries())
             {
+                sb.Clear();
+
+                if (!string.IsNullOrEmpty(entry.URL))
+                    sb.AppendLine("URL: " + entry.URL);
+
+                if (entry.PasswordId != null)
+                    sb.AppendLine("Using: " + passwordsMap[entry.PasswordId.Value].Name);
+                
+                entry.Description = sb.ToString();
+
                 logins.Add(entry);
             }
 
@@ -191,6 +203,60 @@ namespace LinkedPasswords.ViewModels
         }
 
         #region Password Commands
+        public ICommand AddPasswordCommand
+        {
+            get { return new CommandHelper(AddPassword); }
+        }
+
+        private void AddPassword()
+        {
+            try
+            {
+                var dlg = new EditPasswordWindow(ds);
+                dlg.Owner = mainWindow;
+                dlg.ShowDialog();
+
+                if (!dlg.Cancelled)
+                    LoadLists();
+            }
+            catch (Exception e)
+            {
+                MessageBoxFactory.ShowError(e);
+            }
+        }
+
+        public ICommand EditPasswordCommand
+        {
+            get { return new CommandHelper(EditPassword); }
+        }
+
+        private void EditPassword()
+        {
+            try
+            {
+                if (SelectedPassword == null)
+                    return;
+
+                try
+                {
+                    var dlg = new EditPasswordWindow(ds, SelectedPassword);
+                    dlg.Owner = mainWindow;
+                    dlg.ShowDialog();
+
+                    if (!dlg.Cancelled)
+                        LoadLists();
+                }
+                catch (Exception e)
+                {
+                    MessageBoxFactory.ShowError(e);
+                }
+            }
+            catch (Exception e)
+            {
+                MessageBoxFactory.ShowError(e);
+            }
+        }
+
         public ICommand DeletePasswordCommand
         {
             get { return new CommandHelper(DeletePassword); }
@@ -203,8 +269,13 @@ namespace LinkedPasswords.ViewModels
                 if (SelectedPassword == null)
                     return;
 
-                ds.DeletePassword(SelectedPassword);
-                LoadLists();
+                //TODO: Should make PasswordOptional and if doesn't have, mark red 
+                if (MessageBoxFactory.ShowConfirmAsBool("Delete " + SelectedPassword.Name + "? All logins will be deleted.",
+                    "Delete Password", System.Windows.MessageBoxImage.Exclamation))
+                {
+                    ds.DeletePassword(SelectedPassword);
+                    LoadLists();
+                }
             }
             catch (Exception e)
             {
@@ -215,6 +286,31 @@ namespace LinkedPasswords.ViewModels
         #endregion
 
         #region Login Commands
+
+        public ICommand DeleteLoginCommand
+        {
+            get { return new CommandHelper(DeleteLogin); }
+        }
+
+        private void DeleteLogin()
+        {
+            try
+            {
+                if (SelectedLogin == null)
+                    return;
+                
+                if (MessageBoxFactory.ShowConfirmAsBool("Delete " + SelectedLogin.Name + "?",
+                    "Delete Login", System.Windows.MessageBoxImage.Exclamation))
+                {
+                    ds.DeleteEntry(SelectedLogin);
+                    LoadLists();
+                }
+            }
+            catch (Exception e)
+            {
+                MessageBoxFactory.ShowError(e);
+            }
+        }
         #endregion
     }
 }
