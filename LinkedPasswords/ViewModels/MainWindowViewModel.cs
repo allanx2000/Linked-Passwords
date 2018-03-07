@@ -122,7 +122,7 @@ namespace LinkedPasswords.ViewModels
                     ds = newDs;
                     LoadLists();
 
-                    TryAdd();
+                    //TryAdd();
 
 
                     StatusMessage = "Opened: " + dlg.Path;
@@ -286,6 +286,60 @@ namespace LinkedPasswords.ViewModels
         #endregion
 
         #region Login Commands
+        public ICommand AddLoginCommand
+        {
+            get { return new CommandHelper(AddLogin); }
+        }
+
+        private void AddLogin()
+        {
+            try
+            {
+                var dlg = new EditLoginWindow(ds, passwordsMap);
+                dlg.Owner = mainWindow;
+                dlg.ShowDialog();
+
+                if (!dlg.Cancelled)
+                    LoadLists();
+            }
+            catch (Exception e)
+            {
+                MessageBoxFactory.ShowError(e);
+            }
+        }
+
+        public ICommand EditLoginCommand
+        {
+            get { return new CommandHelper(EditLogin); }
+        }
+
+        private void EditLogin()
+        {
+            try
+            {
+                if (SelectedLogin == null)
+                    return;
+
+                try
+                {
+                    var dlg = new EditLoginWindow(ds, passwordsMap, SelectedLogin);
+                    dlg.Owner = mainWindow;
+                    dlg.ShowDialog();
+
+                    if (!dlg.Cancelled)
+                        LoadLists();
+                }
+                catch (Exception e)
+                {
+                    MessageBoxFactory.ShowError(e);
+                }
+            }
+            catch (Exception e)
+            {
+                MessageBoxFactory.ShowError(e);
+            }
+        }
+
 
         public ICommand DeleteLoginCommand
         {

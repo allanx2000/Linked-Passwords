@@ -75,8 +75,8 @@
                 </ListBox>
 
                 <StackPanel Grid.Column="1" Orientation="Vertical" VerticalAlignment="Center">
-                    <Button>Add</Button>
-                    <Button IsEnabled="{Binding SelectedLogin, Converter={StaticResource EnabledConverter}}" >Edit</Button>
+                    <Button Command="{Binding AddLoginCommand}">Add</Button>
+                    <Button IsEnabled="{Binding SelectedLogin, Converter={StaticResource EnabledConverter}}" Command="{Binding EditLoginCommand}">Edit</Button>
                     <Button IsEnabled="{Binding SelectedLogin, Converter={StaticResource EnabledConverter}}" Command="{Binding DeleteLoginCommand}" >Delete</Button>
                 </StackPanel>
             </Grid>

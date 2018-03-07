@@ -4,43 +4,56 @@ using LinkedPasswords.Dao;
 using LinkedPasswords.Models;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.ComponentModel;
 using System.Windows;
+using System.Windows.Data;
 using System.Windows.Input;
 
 namespace LinkedPasswords.ViewModels
 {
-    class EditPasswordWindowViewModel : Innouvous.Utils.Merged45.MVVM45.ViewModel
+    class EditLoginWindowViewModel : Innouvous.Utils.Merged45.MVVM45.ViewModel
     {
         private readonly Window window;
-        private PasswordItem existing;
+        private Entry existing;
         private bool isEdit;
         private IDataStore ds;
+        private Dictionary<int, PasswordItem> passwordsMap;
+        private CollectionViewSource cvsPasswords;
 
-        public EditPasswordWindowViewModel(Window window, IDataStore ds, PasswordItem existing = null)
+        public EditLoginWindowViewModel(Window window, IDataStore ds, Dictionary<int, PasswordItem> passwordsMap, Entry existing = null)
         {
             this.window = window;
             Cancelled = true;
 
             isEdit = existing != null;
             this.ds = ds;
+            this.passwordsMap = passwordsMap;
+
+            cvsPasswords = new CollectionViewSource();
+            cvsPasswords.Source = passwordsMap.Values;
+            cvsPasswords.SortDescriptions.Add(new System.ComponentModel.SortDescription("Name", System.ComponentModel.ListSortDirection.Ascending));
 
             if (isEdit)
             {
                 this.existing = existing;
                 Name = existing.Name;
-                Username = existing.Username;
-                Password = existing.Password;
+                URL = existing.URL;
+
+                if (existing.PasswordId != null)
+                    SelectedPassword = passwordsMap[existing.PasswordId.Value];
             }
+        }
+
+        public ICollectionView Passwords
+        {
+            get { return cvsPasswords.View; }
         }
 
         public bool Cancelled { get; private set; }
 
         public string WindowTitle
         {
-            get { return (!isEdit ? "Create" : "Edit") + " Password"; }
+            get { return (!isEdit ? "Create" : "Edit") + " Login"; }
         }
 
         public string OKText
@@ -60,7 +73,7 @@ namespace LinkedPasswords.ViewModels
             }
         }
 
-        public string Username
+        public string URL
         {
             get { return Get<string>(); }
             set
@@ -70,9 +83,9 @@ namespace LinkedPasswords.ViewModels
             }
         }
 
-        public string Password
+        public PasswordItem SelectedPassword
         {
-            get { return Get<string>(); }
+            get { return Get<PasswordItem>(); }
             set
             {
                 Set(value);
@@ -84,7 +97,7 @@ namespace LinkedPasswords.ViewModels
         {
             get { return new CommandHelper(() => window.Close()); }
         }
-
+        
         public ICommand OKCommand
         {
             get { return new CommandHelper(Save); }
@@ -94,25 +107,33 @@ namespace LinkedPasswords.ViewModels
         {
             try
             {
-                if (string.IsNullOrEmpty(Password) || string.IsNullOrEmpty(Username) || string.IsNullOrEmpty(Name))
+                if (string.IsNullOrEmpty(Name))
                 {
-                    throw new Exception("All fields are required.");
+                    throw new Exception("Name is required.");
+                }
+                else if (SelectedPassword == null)
+                {
+                    throw new Exception("A password must be selected.");
                 }
 
-                PasswordItem pwd = new PasswordItem();
+                Entry entry = new Entry();
 
-                pwd.Username = Username;
-                pwd.Password = Password;
-                pwd.Name = Name;
+                entry.URL = URL;
+                entry.Name = Name;
+
+                if (SelectedPassword == null)
+                    entry.PasswordId = null;
+                else
+                    entry.PasswordId = SelectedPassword.ID;
 
 
                 if (isEdit)
                 {
-                    pwd.ID = existing.ID;
-                    ds.UpdatePassword(pwd);
+                    entry.ID = existing.ID;
+                    ds.UpdateEntry(entry);
                 }
                 else
-                    ds.AddPassword(pwd);
+                    ds.AddEntry(entry);
 
                 Cancelled = false;
                 window.Close();

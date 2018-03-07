@@ -1,4 +1,4 @@
-﻿<Window x:Class="LinkedPasswords.EditPasswordWindow"
+﻿<Window x:Class="LinkedPasswords.EditLoginWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -20,7 +20,7 @@
             <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
-        
+
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
@@ -28,20 +28,20 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <Label Grid.Row="0" Grid.Column="0" Style="{StaticResource GridField}">Name: </Label>
+        <Label Grid.Row="0" Grid.Column="0" Style="{StaticResource GridField}">Name:</Label>
         <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding Name}"/>
-        
-        <Label Grid.Row="1" Grid.Column="0" Style="{StaticResource GridField}">Username: </Label>
-        <TextBox Grid.Row="1" Grid.Column="1"  Text="{Binding Username}"/>
-        
-        <Label Grid.Row="2" Grid.Column="0" Style="{StaticResource GridField}">Password: </Label>
-        <TextBox Grid.Row="2" Grid.Column="1"  Text="{Binding Password}"/>
+
+        <Label Grid.Row="1" Grid.Column="0" Style="{StaticResource GridField}">Password:</Label>
+        <ComboBox Padding="4" IsEditable="False" Grid.Row="1" Grid.Column="1" SelectedItem="{Binding SelectedPassword}" DisplayMemberPath="Name" ItemsSource="{Binding Passwords}" />
+
+        <Label Grid.Row="2" Grid.Column="0" FontStyle="Italic" Style="{StaticResource GridField}">URL:</Label>
+        <TextBox Grid.Row="2" Grid.Column="1"  Text="{Binding URL}"/>
 
         <StackPanel Grid.Row="3" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Center">
             <Button Width="50" Content="{Binding OKText, FallbackValue=OKText}" Command="{Binding OKCommand}"/>
             <Button Width="50" Content= "Cancel" Command="{Binding CancelCommand}"/>
 
         </StackPanel>
-        
+
     </Grid>
 </Window>
