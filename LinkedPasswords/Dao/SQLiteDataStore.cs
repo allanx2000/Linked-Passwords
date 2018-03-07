@@ -181,7 +181,7 @@ namespace LinkedPasswords.Dao
         }
 
         private const string cUpdateEntry = "update {0} set Name = '{2}', Url='{3}', PasswordId={4} where Id = {1}";
-        private const string cUpdatePassword = "update {0} set Name = {2}, Username = '{3}', Password = '{4}', where Id = {1}";
+        private const string cUpdatePassword = "update {0} set Name = '{2}', Username = '{3}', Password = '{4}' where Id = {1}";
 
         public void UpdateEntry(Entry i)
         {

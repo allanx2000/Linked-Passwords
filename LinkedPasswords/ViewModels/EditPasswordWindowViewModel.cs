@@ -14,12 +14,12 @@ namespace LinkedPasswords.ViewModels
 {
     class EditPasswordWindowViewModel : Innouvous.Utils.Merged45.MVVM45.ViewModel
     {
-        private readonly Window window;
+        private readonly EditPasswordWindow window;
         private PasswordItem existing;
         private bool isEdit;
         private IDataStore ds;
 
-        public EditPasswordWindowViewModel(Window window, IDataStore ds, PasswordItem existing = null)
+        public EditPasswordWindowViewModel(EditPasswordWindow window, IDataStore ds, PasswordItem existing = null)
         {
             this.window = window;
             Cancelled = true;
@@ -72,10 +72,10 @@ namespace LinkedPasswords.ViewModels
 
         public string Password
         {
-            get { return Get<string>(); }
+            get { return window.PasswordBox.Password; }
             set
             {
-                Set(value);
+                window.PasswordBox.Password = value;
                 RaisePropertyChanged();
             }
         }
