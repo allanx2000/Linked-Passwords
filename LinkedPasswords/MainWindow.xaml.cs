@@ -33,6 +33,11 @@ namespace LinkedPasswords
             DataContext = vm;
 
             //Test();
+
+            if (Innouvous.Utils.SingleInstance.Checker.AlreadyRunning)
+            {
+                App.Current.Shutdown();
+            }
         }
 
         private void Test()
